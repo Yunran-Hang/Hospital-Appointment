@@ -1,0 +1,27 @@
+// 主色 - 医疗蓝
+$primary-color: #3498db;  // 明亮的蓝色，传达专业和信任
+$primary-light: #5dade2;  // 浅色变体，用于悬停状态
+$primary-dark: #2980b9;   // 深色变体，用于激活状态
+
+// 辅助色 - 温暖绿
+$success-color: #27ba9b;  // 保留原有的绿色，代表健康和希望
+$success-light: #4ecdc4;  // 浅绿色，用于次要元素
+
+// 背景色
+$bg-color: #f8f9fa;       // 页面背景，浅灰色提供舒适阅读体验
+$card-bg: #ffffff;         // 卡片背景，纯白色
+
+// 文本色
+$text-primary: #333333;    // 主要文本
+$text-secondary: #666666;  // 次要文本
+$text-light: #999999;      // 辅助文本
+
+// 预约相关
+$available-color: #27ba9b; // 可预约状态
+$booked-color: #e67e22;    // 已预约状态
+$full-color: #bdc3c7;      // 已满状态
+
+// 提示色
+$warning-color: #f39c12;   // 警告色，温和的橙色
+$danger-color: #e74c3c;    // 错误色，柔和的红色
+$info-color: #3498db;      // 信息色，与主色相同

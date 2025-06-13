@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nbdeyy.mapper.ScheduleMapper">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into schedule
+        <set>
+            <if test="doctorId != null"> doctor_id = #{doctorId},</if>
+            <if test="workDate != null">  work_date = #{workDate},</if>
+            <if test="period != null"> period = #{period},</if>
+            <if test="maxAppointments != null"> max_appointments = #{maxAppointments},</if>
+            <if test="leftAppointments != null"> left_appointments = #{leftAppointments},</if>
+            <if test="timePeriodInterval != null"> time_period_interval = #{timePeriodInterval},</if>
+            <if test="startTime != null"> start_time = #{startTime},</if>
+            <if test="endTime != null"> end_time = #{endTime},</if>
+            <if test="createTime != null"> create_time = #{createTime},</if>
+            <if test="updateTime != null"> update_time = #{updateTime},</if>
+        </set>
+    </insert>
+    <update id="update">
+        update schedule
+        <set>
+            <if test="doctorId != null"> doctor_id = #{doctorId},</if>
+            <if test="workDate != null">  work_date = #{workDate},</if>
+            <if test="period != null"> period = #{period},</if>
+            <if test="maxAppointments != null"> max_appointments = #{maxAppointments},</if>
+            <if test="leftAppointments != null"> left_appointments = #{leftAppointments},</if>
+            <if test="updateTime != null"> update_time = #{updateTime},</if>
+            <if test="timePeriodInterval != null"> time_period_interval = #{timePeriodInterval},</if>
+            <if test="startTime != null"> start_time = #{startTime},</if>
+            <if test="endTime != null"> end_time = #{endTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getScheduleList" resultType="com.nbdeyy.vo.ScheduleListVO">
+        SELECT s.id schedule_id,s.work_date,s.period,s.max_appointments,s.left_appointments,
+               s.time_period_interval,s.start_time,s.end_time,
+               d.name doctor_name, d.id doctorId,
+               dept.id department_id, dept.name department_name
+        FROM schedule s
+                 JOIN doctor d on d.id = s.doctor_id
+                 JOIN department dept on dept.id = d.department_id
+        WHERE s.work_date = #{workDate}
+    </select>
+    <select id="getDoctorScheduleInTwoWeeks" resultType="com.nbdeyy.vo.ScheduleListVO">
+        SELECT s.id AS schedule_id, s.work_date, s.period, s.max_appointments, s.left_appointments,
+               s.time_period_interval, s.start_time, s.end_time,
+               d.name AS doctor_name, d.id AS doctorId,
+               dept.id AS department_id, dept.name AS department_name
+        FROM schedule s
+                 JOIN doctor d ON d.id = s.doctor_id
+                 JOIN department dept ON dept.id = d.department_id
+        WHERE s.doctor_id = #{doctorId}
+          AND s.work_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY s.work_date ASC, s.period ASC
+    </select>
+</mapper>

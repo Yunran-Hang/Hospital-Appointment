@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nbdeyy.mapper.DoctorMapper">
+    <resultMap id="doctorSearchResultMap" type="com.nbdeyy.vo.DoctorSearchVO">
+        <!-- 根据需要映射到VO的字段 -->
+        <result property="name" column="doctorName"/>
+        <result property="title" column="doctorTitle"/>
+        <result property="avatar" column="doctorAvatar"/>
+        <result property="campus" column="doctorCampus"/>
+        <result property="departmentId" column="departId"/>
+        <result property="departmentName" column="departName"/>
+        <result property="fee" column="doctorFee"/>
+        <result property="workDate" column="scheduleWordDate"/>
+        <result property="period" column="schedulePeriod"/>
+        <result property="totalSchedule" column="doctorTotalSchedule"/>
+        <result property="maxAppointment" column="scheduleMaxAppointments"/>
+        <result property="leftAppointment" column="scheduleLeftAppointments"/>
+        <result property="doctorId" column="doctorId"/>
+    </resultMap>
+
+    <select id="getDoctorDetail" resultType="com.nbdeyy.vo.DoctorDetailVO">
+        select d.id,d.name,d.avatar,d.department_id,d.campus,d.title,d.specialty,d.totalSchedule,
+               d.description,d.fee,d.location,de.name as departmentName
+        from doctor d
+                 join department de on de.id = d.department_id
+        where d.id = #{doctorId}
+    </select>
+    <update id="update">
+        update doctor
+        <set>
+            <if test="name != null and name != ''"> name = #{name},</if>
+            <if test="avatar != null and avatar != ''"> avatar = #{avatar},</if>
+            <if test="departmentId != null"> department_id = #{departmentId},</if>
+            <if test="campus != null and campus != ''"> campus = #{campus},</if>
+            <if test="title != null and title != ''"> title = #{title},</if>
+            <if test="specialty != null"> specialty = #{specialty},</if>
+            <if test="totalSchedule != null"> totalSchedule = #{totalSchedule},</if>
+            <if test="description != null"> description = #{description},</if>
+            <if test="fee != null"> fee = #{fee},</if>
+            <if test="location != null"> location = #{location},</if>
+            <if test="status != null"> status = #{status},</if>
+            <if test="updateTime != null"> updateTime = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="pageQuery" resultMap="doctorSearchResultMap">
+        SELECT d.id doctorId,d.name doctorName, d.title doctorTitle, d.campus doctorCampus, d.fee doctorFee,d.avatar doctorAvatar,
+               d.totalSchedule doctorTotalSchedule, depart.id departId, depart.name departName, s.work_date scheduleWordDate,
+               s.period schedulePeriod, s.max_appointments scheduleMaxAppointments, s.left_appointments scheduleLeftAppointments
+        FROM doctor d
+        JOIN department depart on depart.id = d.department_id
+        JOIN schedule s on s.doctor_id = d.id
+        <where>
+            <if test="departmentId != null">
+                AND d.department_id = #{departmentId}
+            </if>
+            <if test="period == 0 or period==null">
+                AND (
+                s.work_date > CURDATE() OR
+                (s.work_date = CURDATE() AND s.period = 2) OR
+                (s.work_date = CURDATE() AND s.period = 1 AND NOW() &lt;= CONCAT(CURDATE(), ' 12:00:00'))
+                )
+            </if>
+            <if test="period == 1">
+                AND s.period = 1
+                AND (
+                s.work_date > CURDATE() OR
+                (s.work_date = CURDATE() AND NOW() &lt;= CONCAT(CURDATE(), ' 12:00:00'))
+                )
+            </if>
+            <if test="period == 2">
+                AND s.period = 2
+            </if>
+            <if test="date != null">
+                AND s.work_date = #{date}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (d.name LIKE concat('%',#{searchKeyword},'%') or depart.name LIKE concat('%',#{searchKeyword},'%'))
+            </if>
+            AND s.work_date >= CURDATE()
+        </where>
+
+    </select>
+
+    <select id="pageQueryDoctorList" resultType="com.nbdeyy.vo.DoctorDetailVO">
+        select d.*,dept.name departmentName from doctor d
+        join department dept on d.department_id = dept.id
+        <where>
+            <if test="doctorName != null and doctorName != ''">
+                 d.name like concat('%',#{doctorName},'%')
+            </if>
+            <if test="departmentId != null">
+                 and d.department_id = #{departmentId}
+            </if>
+            <if test="title != null and title != ''">
+                 and d.title = #{title}
+            </if>
+        </where>
+        order by d.update_time desc
+    </select>
+</mapper>

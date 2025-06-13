@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nbdeyy.mapper.OperateLogMapper">
+    <select id="pageQuery" resultType="com.nbdeyy.entity.OperateLog">
+        select * from operate_log
+        <where>
+            <if test="className != null and className != ''"> and class_name like concat('%',#{className},'%')</if>
+            <if test="methodName != null and methodName != ''"> and method_name like concat('%',#{methodName},'%')</if>
+            <if test="operateTimeStart != null and operateTimeEnd != null">
+                and operate_time between #{operateTimeStart} and #{operateTimeEnd}
+            </if>
+        </where>
+        order by operate_time desc
+    </select>
+</mapper>

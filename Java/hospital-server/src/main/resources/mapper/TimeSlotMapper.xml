@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nbdeyy.mapper.TimeSlotMapper">
+    <!--  批量插入号源  -->
+    <insert id="insertBatch">
+        insert into time_slot (schedule_id, number_id, start_time, end_time, status,create_time,update_time)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.scheduleId}, #{item.numberId}, #{item.startTime}, #{item.endTime}, #{item.status},#{item.createTime},#{item.updateTime})
+        </foreach>
+    </insert>
+    <update id="update">
+        update time_slot
+        <set>
+            <if test="scheduleId != null">schedule_id = #{scheduleId},</if>
+            <if test="numberId != null">number_id = #{numberId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
